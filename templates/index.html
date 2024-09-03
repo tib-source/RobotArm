@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Robot Arm</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body,
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+
+        /* CSS */
+        button {
+            background-color: rgba(51, 51, 51, 0.05);
+            border-radius: 8px;
+            border-width: 0;
+            color: #333333;
+            cursor: pointer;
+            display: inline-block;
+            font-family: "Haas Grot Text R Web", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 20px;
+            list-style: none;
+            margin: 0;
+            padding: 10px 12px;
+            text-align: center;
+            transition: all 200ms;
+            vertical-align: baseline;
+            white-space: nowrap;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+
+        /* ".inherited-styles-for-exported-element" is a generated class for the inherited styles of the exported element, feel free to rename it. */
+
+        #demo-img {
+            width: 500px;
+            height: 500px;
+            object-fit: cover;
+            border-radius: 15px;
+            box-shadow: rgba(0, 12, 32, .04) 0 0 1px 0, rgba(10, 31, 68, .06) 0 10px 16px 0;
+            margin: 3em auto;
+            overflow: hidden;
+            transition: opacity .5s ease-in;
+            transition-behavior: normal;
+        }
+
+        @media screen and (min-width: 1024px) {
+            .demo-img {
+                display: block;
+            }
+        }
+
+
+        .upload {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .upload-btn-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .upload-btn-wrapper input[type=file] {
+            font-size: 100px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="upload">
+            <img style="display: none;" src="" id="demo-img" alt="">
+            <div class="upload-btn-wrapper">
+                <button class="button" id="upload_button">Upload a file</button>
+                <input type="file" id="image_upload" name="image" />
+            </div>
+        </div>
+        <button id="start_drawing">Start Drawing</button>
+    </div>
+
+
+    <script>
+
+
+        window.addEventListener('load', () => {
+            let image = null;
+
+            document.getElementById('image_upload').addEventListener('change', (e) => {
+                console.log("this has happened!!")
+                if (e.target.files && e.target.files[0]) {
+                    html_image = document.getElementById('demo-img')
+                    html_image.onload = () => {
+                        URL.revokeObjectURL(html_image.src)
+                    }
+
+                    image = e.target.files[0]
+
+                    html_image.src = URL.createObjectURL(image)
+                    html_image.style.display = "block"
+                }
+            })
+
+
+            document.getElementById('start_drawing').addEventListener('click', async () => {
+                if (image) {
+                    const formData = new FormData();
+                    formData.append('data', image)
+                    const response = await fetch('http://127.0.0.1:5000/upload', {
+                        method: "POST",
+                        body: formData
+                    })
+
+                    if (response.status == 200) {
+                        return console.log(await response.json())
+                    }
+                }
+            })
+
+        })
+    </script>
+</body>
+
+</html>

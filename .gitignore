@@ -1,0 +1,4 @@
+.venv/
+BrachioGraph/
+uploads/*
+!uploads/.gitkeep
