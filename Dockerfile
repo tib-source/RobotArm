@@ -6,10 +6,7 @@ COPY . .
 
 # Update and install necessary packages
 RUN apt-get update && apt-get -y upgrade && \
-    apt-get --fix-missing install -y python3-venv python3-tk libjbig0 libjpeg-dev \
-    liblcms2-2 libopenjp2-7 libtiff5-dev libwebpdemux2 libwebpmux3 libzstd1 \
-    libatlas3-base libgfortran5 git python3-dev unzip make build-essential \
-    python3-pip wget && \
+    apt-get --fix-missing install -y python3-venv python3-tk libjbig0 libjpeg-dev liblcms2-2 libopenjp2-7 libtiff5-dev libwebp7 libwebpdemux2 libwebpmux3 libzstd1 libatlas3-base libgfortran5 git python3-pip wget unzip && \
     apt remove python3-matplotlib && \
     pip uninstall matplotlib && \
     rm -rf /var/lib/apt/lists/*
