@@ -109,6 +109,7 @@
 
         window.addEventListener('load', () => {
             let image = null;
+            let image_path = null
 
             document.getElementById('image_upload').addEventListener('change', (e) => {
                 console.log("this has happened!!")
@@ -134,9 +135,13 @@
                         method: "POST",
                         body: formData
                     })
-
+                    // TODO: Change these to show up as popup modals/toastify notifications 
                     if (response.status == 200) {
-                        return console.log(await response.json())
+                        image_path = await response.text()
+                        console.log(`INFO: Started Drawing Image ${image_path}`)
+                    } else {
+                        console.log(`WARNING: Failed to upload Image`)
+
                     }
                 }
             })

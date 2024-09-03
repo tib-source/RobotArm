@@ -1,0 +1,8 @@
+name: RobotArm
+
+
+services:
+  robotArm: 
+    dockerfile: DockerFile
+  container_name: robotArm
+  restart: always
