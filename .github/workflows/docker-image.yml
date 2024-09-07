@@ -17,4 +17,4 @@ jobs:
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag robotarm:latest
     - name: Run the docker image
-      run: docker compose up robotarm
+      run: docker compose up robotarm:latest
