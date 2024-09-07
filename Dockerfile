@@ -27,8 +27,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install --no-cache-dir -r BrachioGraph/requirements.txt
 RUN pip install --no-cache-dir opencv-python-headless
 RUN pip install --no-cache-dir matplotlib==3.7.1 
-RUN pip uninstall numpy -y
-RUN pip install -U numpy
+
 
 
 # Start the pigpio daemon
