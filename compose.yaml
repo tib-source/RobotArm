@@ -4,5 +4,5 @@ name: RobotArm
 services:
   robotArm: 
     dockerfile: DockerFile
-  container_name: robotArm
+  container_name: robotarm
   restart: always
