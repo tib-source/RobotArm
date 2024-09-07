@@ -1,8 +1,5 @@
-name: RobotArm
-
-
 services:
-  robotArm: 
-    dockerfile: DockerFile
-  container_name: robotarm
-  restart: always
+  robotarm: 
+    build: .
+    ports:
+      - "8000:5000"
