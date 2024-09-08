@@ -33,6 +33,6 @@ RUN pip install --no-cache-dir matplotlib==3.7.1
 # Start the pigpio daemon
 RUN pigpiod
 
-EXPOSE 80
+ENTRYPOINT [ "python" ]
 
-CMD ["python3", "-m", "flask", "--app", "/app/app", "run", "--host=0.0.0.0"]
+CMD ["app.py" ]

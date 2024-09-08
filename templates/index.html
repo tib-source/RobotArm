@@ -49,15 +49,19 @@
             touch-action: manipulation;
         }
 
+        button:hover {
+            background-color: aliceblue;
+        }
+
         /* ".inherited-styles-for-exported-element" is a generated class for the inherited styles of the exported element, feel free to rename it. */
 
-        #demo-img {
+        .demo-img {
             width: 500px;
             height: 500px;
             object-fit: cover;
             border-radius: 15px;
             box-shadow: rgba(0, 12, 32, .04) 0 0 1px 0, rgba(10, 31, 68, .06) 0 10px 16px 0;
-            margin: 3em auto;
+            margin: 1em auto;
             overflow: hidden;
             transition: opacity .5s ease-in;
             transition-behavior: normal;
@@ -73,12 +77,14 @@
         .upload {
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 1rem;
         }
 
         .upload-btn-wrapper {
             position: relative;
             display: inline-block;
+            overflow: hidden;
         }
 
         .upload-btn-wrapper input[type=file] {
@@ -88,16 +94,29 @@
             top: 0;
             opacity: 0;
         }
+
+        .upload_box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
     </style>
 </head>
 
 <body>
     <div class="container">
         <div class="upload">
-            <img style="display: none;" src="" id="demo-img" alt="">
-            <div class="upload-btn-wrapper">
-                <button class="button" id="upload_button">Upload a file</button>
-                <input type="file" id="image_upload" name="image" />
+            <div class="upload_box">
+                <div class="upload-btn-wrapper">
+                    <button class="button" id="upload_button">Upload a file</button>
+                    <input type="file" id="image_upload" name="image" />
+                </div>
+                <img src="" class="demo-img" id="upload_img" alt="">
+            </div>
+            <button class="button" id="vectorise"> - Vectorise -> </button>
+            <div class="upload_box">
+                <button style="visibility:hidden;" class="button" id="upload_button">Upload a file</button>
+                <img class="demo-img" id="vector_image" alt="">
             </div>
         </div>
         <button id="start_drawing">Start Drawing</button>
@@ -111,39 +130,47 @@
             let image = null;
             let image_path = null
 
-            document.getElementById('image_upload').addEventListener('change', (e) => {
+            document.getElementById('image_upload').addEventListener('change', async (e) => {
                 console.log("this has happened!!")
                 if (e.target.files && e.target.files[0]) {
-                    html_image = document.getElementById('demo-img')
+                    html_image = document.getElementById('upload_img')
                     html_image.onload = () => {
                         URL.revokeObjectURL(html_image.src)
                     }
 
                     image = e.target.files[0]
 
-                    html_image.src = URL.createObjectURL(image)
-                    html_image.style.display = "block"
+                    if (image) {
+                        const formData = new FormData();
+                        formData.append('data', image)
+                        const response = await fetch('http://127.0.0.1:5000/upload', {
+                            method: "POST",
+                            header: {
+                                "Access-Control-Allow-Origin": "*"
+                            },
+                            body: formData
+                        })
+                        // TODO: Change these to show up as popup modals/toastify notifications 
+
+                        image_path = await response.text()
+                        console.log(`INFO: Started Drawing Image ${image_path}, ${response.status}`)
+
+                    }
+
+                    html_image.src = `/images/${image_path}`
                 }
             })
 
 
             document.getElementById('start_drawing').addEventListener('click', async () => {
-                if (image) {
-                    const formData = new FormData();
-                    formData.append('data', image)
-                    const response = await fetch('http://127.0.0.1:5000/upload', {
-                        method: "POST",
-                        body: formData
-                    })
-                    // TODO: Change these to show up as popup modals/toastify notifications 
-                    if (response.status == 200) {
-                        image_path = await response.text()
-                        console.log(`INFO: Started Drawing Image ${image_path}`)
-                    } else {
-                        console.log(`WARNING: Failed to upload Image`)
 
-                    }
-                }
+            })
+
+
+            document.getElementById('vectorise').addEventListener('click', async () => {
+                vector_image = document.getElementById('vector_image')
+                vector_image.src = `/images/${image_path.split(".")[0]}.svg`
+
             })
 
         })
