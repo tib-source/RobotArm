@@ -4,7 +4,6 @@ from flask_cors import CORS
 
 from flask import Flask, request, render_template, send_from_directory
 from BrachioGraph.brachiograph import BrachioGraph
-from BrachioGraph.linedraw import image_to_json
 
 app = Flask(__name__)
 CORS(app)
@@ -33,15 +32,19 @@ def uploadAndDraw():
 
 
 def vectorise(file_name):
-
-    code = """
+    try:
+        os.chdir("BrachioGraph/")
+        code = """
 from linedraw import vectorise
-vectorise("{}", draw_contours=2, draw_hatch=16)
-    """
-    # Change the current working directory to the target directory
-    os.chdir("BrachioGraph/")
-    subprocess.call(["python3", "-c", code.format(file_name)])
-    os.chdir("../")
+vectorise("{}", resolution=1024, draw_contours=1, draw_hatch=8)
+
+        """
+        # Change the current working directory to the target directory
+        subprocess.call(["python3", "-c", code.format(file_name)])
+        os.chdir("../")
+    except Exception as e:
+        print(e)
+        os.chdir("../")
 
 
 @app.route("/images/<path:name>")
@@ -49,6 +52,7 @@ def download_file(name):
     return send_from_directory(app.config["IMAGE_UPLOADS"], name)
 
 
+@app.route("/draw", method=["POST"])
 def start_drawing(filename):
     # A "naively" calibrated plotter definition. We assume the default 10ms
     # pulse-width difference = 1 degree of motor movement. If the arms appear to
@@ -68,9 +72,6 @@ def start_drawing(filename):
         pw_down=1200,
         pw_up=1850,
     )
-
-    # Vectorise the image
-    image_to_json(filename, draw_contours=2, draw_hatch=16)
 
 
 if __name__ == "__main__":
